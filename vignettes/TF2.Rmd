@@ -1,0 +1,82 @@
+---
+title: "TF2"
+author: "Sean Liew"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TF2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The `TF2` package offers 4 different functions for Team Fortress 2 kill statistics and visualisations: `findmap`, `elevation`, `weprange`, and `charclass`. 
+
+```{r echo=FALSE}
+library(teamfortress2)
+```
+
+## `findmap`
+
+This function searches for map by a regex pattern, and returns matching maps with the number of kills recorded for each map.
+
+```{r}
+findmap("hightower")
+```
+
+A threshold for minimum number of kills can also be set, and is 1 by default. 
+
+```{r}
+findmap("event$", 500)
+```
+
+## `elevation`
+
+This function shows the distribution of elevation differences between killers and victims, by the map, killers' weapon, and optionally the enemy class. This is a kernel density estimate of the frequency of kills, against the elevation difference between the killer and victim. Elevation is defined such that it is positive if the killer is on higher ground than the victim.
+
+For example, the plots below show the distribution of kills by elevation for two sniper class weapons - _huntsman_ (bow) and _sniper rifle_. The _huntsman_ has shorter range (both horizontal and vertical), and so the kills are more clustered towards 0 elevation, while the _sniper rifle_ has more kills at non-zero elevations, in particular when the killer has higher ground. 
+
+```{r}
+elevation("pl_goldrush", 56) ## huntsman (short range)
+elevation("pl_goldrush", 14) ## sniper rifle (long range)
+```
+
+This function can also specify a particular enemy class. For example, the example shows how kills using _the direct hit_ tend to have larger elevation difference when used against enemy snipers than the spies. 
+
+```{r}
+elevation("pl_goldrush", 127, "spy") ## The Direct Hit (rocket launcher)
+elevation("pl_goldrush", 127, "sniper")
+```
+
+## `weprange`
+
+This function shows the distribution of kill ranges, by the map, killers' weapon, and optionally the enemy class. For example, the example below shows how the _grenade launcher_ excels at killing at short range compared to the stickybomb launcher, which instead does better at medium range kills. 
+
+```{r}
+weprange("pl_goldrush", 19) ## grenade launcher
+weprange("pl_goldrush", 20) ## stickybomb launcher
+```
+
+Range can be set to either 2D (only x-y) or 3D distance. In most cases, these are fairly similar, since the horizontal components of distance usually dominate any elevation differences. For melee weapons such as _the market gardener_, where the killer is likely to be airborne, there is some difference in the shape of the kernel density estimate using 2D vs 3D distances, as shown below. 
+
+```{r}
+weprange("pl_goldrush", 416, distance = "2D") ## The market gardener
+weprange("pl_goldrush", 416, distance = "3D")
+```
+
+## `charclass` 
+
+This function helps players find the best class for killing a given enemy class, map and team. For asymmetric maps (pl_ and some cp_), BLU represents the attacking team and RED the defending team. The example is for an asymmetric map (pl_goldrush), where BLU team tries to push a payload and RED team tries to defend and stop the payload. The graphs show that when trying to kill enemy engineers, BLU gets comparatively more kills with demomen, spies, and snipers, while RED gets more kills with soldiers and engineers.
+
+```{r}
+charclass("pl_goldrush", enemy_class = "engineer", team = "BLU")
+charclass("pl_goldrush", enemy_class = "engineer", team = "RED")
+```
+
+

@@ -1,0 +1,20 @@
+Package: teamfortress2
+Type: Package
+Title: Team Fortress 2 Analytics
+Version: 0.1.0
+Authors@R: person("Sean", "Liew", email = "seanccliew@gmail.com",
+      role = c("aut", "cre"))
+Description: Provides a collection of functions that visualise Team Fortress 2 (TF2) data for players. 
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    dplyr,
+    ggplot2,
+    httr,
+    stringr
+RoxygenNote: 6.1.0
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
